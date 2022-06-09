@@ -68,7 +68,7 @@ function App() {
 
   return (
     <div>
-      <button onClick={getValsForAPI}>GO</button>
+      <button className='button' onClick={getValsForAPI}>GO</button>
     </div>
   );
 
