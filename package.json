@@ -1,7 +1,7 @@
 {
   "name": "tableau-ext",
   "version": "0.1.0",
-  "homepage": "https://mikedzierskigwp.github.io/tableau-extension",
+  "homepage": "https://bibdwp.github.io/tableau-extension",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.4",
