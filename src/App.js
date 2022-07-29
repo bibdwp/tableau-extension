@@ -51,6 +51,29 @@ function App() {
 
             console.log([filterName, filterVals]);
           };
+
+          if (filter.worksheetName === 'API2') {
+            // /\s+/g - remove whitespace
+            let filterName = 'ep2' + filter.fieldName.replace(/\s+/g, '_').trim();
+            let filterVals;
+
+            if (filter._filterType === 'categorical') {
+              if (!filter.isAllSelected) {
+                filterVals = filter.appliedValues.reduce((acc, val) => acc + val._formattedValue + ',', '');
+              } else {
+                filterVals = 'All';
+              };
+            } else if (filter._filterType === 'range') {
+              filterVals = '{"date_start":"' + filter.minValue.formattedValue + '",' + '"date_end":"' + filter.maxValue.formattedValue + '"}';
+            }
+
+            // /,\s*$/ - remove trailing comma
+            filterVals = filterVals.replace(/,\s*$/, '').trim();
+
+            updateParameter(filterName, filterVals);
+
+            console.log([filterName, filterVals]);
+          };
         });
       }));
   };
