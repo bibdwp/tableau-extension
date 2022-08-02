@@ -1,10 +1,39 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import './App.css';
 
 const { tableau } = window;
 
+const filtersToHide = new Set([
+  'Autorefresh',
+  'Rozkład czasu widocznosci',
+  'Kategoria',
+  'Kontent Kategoria',
+  'Lazy Loading',
+  'Przeglądarka',
+  'Strona Amp'
+]);
+
 
 function App() {
+  const [areTrue, setAreTrue] = useState({
+    'Autorefresh': true,
+    'Rozkład czasu widocznosci': true,
+    'Kategoria': true,
+    'Kontent Kategoria': true,
+    'Lazy Loading': true,
+    'Przeglądarka': true,
+    'Strona Amp': true
+  })
+
+  function areAllTrue(vals) {
+    return Object.values(vals).every(val => val === true)
+  }
+
+  function setHideColumn(val) {
+    tableau.extensions.dashboardContent.dashboard.findParameterAsync('isHideColumn').then(param =>
+      param.changeValueAsync(val));
+  };
+
   useEffect(() => {
     tableau.extensions.initializeAsync();
 
@@ -76,6 +105,9 @@ function App() {
           };
         });
       }));
+
+    setHideColumn(false)
+    
   };
 
   function onFilterChange(filterChangeEvent) {
@@ -85,6 +117,13 @@ function App() {
         paramVal = paramVal.substring(paramVal.lastIndexOf('|') + 1).trim();
         updateParameter('ep_wybrana_wer_bazowa', paramVal);
       }
+
+      if ((filter.worksheetName === "VIMP" || filter.worksheetName === "Adplacement") && filtersToHide.has(filter.fieldName)) {
+
+        areTrue[filter.fieldName] = filter.isAllSelected;
+        setAreTrue(areTrue);
+        setHideColumn(!areAllTrue(areTrue));
+      };
 
     });
   };
