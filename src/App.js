@@ -35,8 +35,6 @@ function App() {
   };
 
   useEffect(() => {
-    tableau.extensions.initializeAsync();
-
     tableau.extensions.initializeAsync().then(() => {
       tableau.extensions.dashboardContent.dashboard.worksheets.map(worksheet =>
         worksheet.addEventListener(tableau.TableauEventType.FilterChanged, onFilterChange));
@@ -48,47 +46,71 @@ function App() {
       param.changeValueAsync(value));
   };
 
-  async function getValsForAPI() {
+  async function handleSite(filter) {
+    const val = await filter.getDomainAsync();
+    let result;
+
+    try {
+      result = (val.values.length === 1) ? val._values[0]._nativeValue : "All";
+    } catch (e) {
+      result = "All";
+      console.log(e);
+    }
+
+    return result;
+
+  };
+
+  function getValsForAPI() {
     tableau.extensions.dashboardContent.dashboard.worksheets.map(worksheet =>
       worksheet.getFiltersAsync().then(function (filters) {
 
-        filters.forEach((filter) => {
-          // /\s+/g - remove whitespace
+        filters.forEach(async function (filter) {
           if (filter.worksheetName === 'API') {
+            // /\s+/g - remove whitespace
             let filterName = 'ep' + filter.fieldName.replace(/\s+/g, '_').trim();
             let filterVals;
 
-            // /,\s*$/ - remove trailing comma
-            if (filter._filterType === 'categorical') {
-              if (!filter.isAllSelected) {
+            if (filter.filterType === 'categorical') {
+              if (filter.isAllSelected && filter.fieldName === 'Serwis') {
+                filterVals = await handleSite(filter);
+              } else if (!filter.isAllSelected) {
                 filterVals = filter.appliedValues.reduce((acc, val) => acc + val._formattedValue + ',', '');
               } else {
                 filterVals = 'All';
               };
             } else if (filter._filterType === 'range') {
+              // eslint-disable-next-line
               filterVals = '{"date_start":"' + filter.minValue.formattedValue + '",' + '"date_end":"' + filter.maxValue.formattedValue + '"}';
+            } else {
+              filterVals = ' '
             }
 
+            // /,\s*$/ - remove trailing comma
             filterVals = filterVals.replace(/,\s*$/, '').trim();
 
             updateParameter(filterName, filterVals);
 
             console.log([filterName, filterVals]);
-          };
 
-          if (filter.worksheetName === 'API2') {
+          } else if (filter.worksheetName === 'API2') {
             // /\s+/g - remove whitespace
             let filterName = 'ep2' + filter.fieldName.replace(/\s+/g, '_').trim();
             let filterVals;
 
             if (filter._filterType === 'categorical') {
-              if (!filter.isAllSelected) {
+              if (filter.isAllSelected && filter.fieldName === 'Serwis') {
+                filterVals = await handleSite(filter);
+              } else if (!filter.isAllSelected) {
                 filterVals = filter.appliedValues.reduce((acc, val) => acc + val._formattedValue + ',', '');
               } else {
                 filterVals = 'All';
               };
             } else if (filter._filterType === 'range') {
+              // eslint-disable-next-line
               filterVals = '{"date_start":"' + filter.minValue.formattedValue + '",' + '"date_end":"' + filter.maxValue.formattedValue + '"}';
+            } else {
+              filterVals = ' '
             }
 
             // /,\s*$/ - remove trailing comma
@@ -98,16 +120,16 @@ function App() {
 
             console.log([filterName, filterVals]);
           };
+
         });
       }));
 
-    setHideColumn(false)
+    setHideColumn(false);
 
   };
 
   function onFilterChange(filterChangeEvent) {
     filterChangeEvent.getFilterAsync().then((filter) => {
-      console.log(filter)
 
       if (filter.worksheetName === 'extension_wersja_bazowa4' && filter.fieldName === 'Abtest Wersja') {
         let val = filter.appliedValues.reduce((acc, val) => acc + val._formattedValue, '');
