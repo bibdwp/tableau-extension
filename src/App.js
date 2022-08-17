@@ -119,6 +119,32 @@ function App() {
             updateParameter(filterName, filterVals);
 
             console.log([filterName, filterVals]);
+          } else if (filter.worksheetName === 'API3') {
+            // /\s+/g - remove whitespace
+            let filterName = 'ep3' + filter.fieldName.replace(/\s+/g, '_').trim();
+            let filterVals;
+
+            if (filter._filterType === 'categorical') {
+              if (filter.isAllSelected && filter.fieldName === 'Serwis') {
+                filterVals = await handleSite(filter);
+              } else if (!filter.isAllSelected) {
+                filterVals = filter.appliedValues.reduce((acc, val) => acc + val._formattedValue + ',', '');
+              } else {
+                filterVals = 'All';
+              };
+            } else if (filter._filterType === 'range') {
+              // eslint-disable-next-line
+              filterVals = '{"date_start":"' + filter.minValue.formattedValue + '",' + '"date_end":"' + filter.maxValue.formattedValue + '"}';
+            } else {
+              filterVals = ' '
+            }
+
+            // /,\s*$/ - remove trailing comma
+            filterVals = filterVals.replace(/,\s*$/, '').trim();
+
+            updateParameter(filterName, filterVals);
+
+            console.log([filterName, filterVals]);
           };
 
         });
@@ -134,17 +160,18 @@ function App() {
       if (filter.worksheetName === 'extension_wersja_bazowa4' && filter.fieldName === 'Abtest Wersja') {
         let val = filter.appliedValues.reduce((acc, val) => acc + val._formattedValue, '');
         updateParameter('wersja_baz_4_zakladka', val);
-      }
-      else if (filter.worksheetName === 'extension_wersja_bazowa3' && filter.fieldName === 'Abtest Wersja') {
+      } else if (filter.worksheetName === 'extension_wersja_bazowa3' && filter.fieldName === 'Abtest Wersja') {
         let val = filter.appliedValues.reduce((acc, val) => acc + val._formattedValue, '');
         updateParameter('wersja_baz_3_zakladka', val);
-      }
-      else if (filter.fieldName === 'Abtest') {
+      } else if (filter.worksheetName === 'API3' && filter.fieldName === 'Abtest') {
+        let paramVal = filter.appliedValues.reduce((acc, val) => acc + val._formattedValue + ',', '').replace(/,\s*$/, '');
+        paramVal = paramVal.substring(paramVal.lastIndexOf('|') + 1).trim();
+        updateParameter('ep3_wybrana_wer_bazowa', paramVal);
+      } else if (filter.fieldName === 'Abtest') {
         let paramVal = filter.appliedValues.reduce((acc, val) => acc + val._formattedValue + ',', '').replace(/,\s*$/, '');
         paramVal = paramVal.substring(paramVal.lastIndexOf('|') + 1).trim();
         updateParameter('ep_wybrana_wer_bazowa', paramVal);
-      }
-      else if ((filter.worksheetName === "VIMP" || filter.worksheetName === "Adplacement") && filtersToHide.has(filter.fieldName)) {
+      } else if ((filter.worksheetName === "VIMP" || filter.worksheetName === "Adplacement" || filter.worksheetName === "Slot") && filtersToHide.has(filter.fieldName)) {
         areTrue[filter.fieldName] = filter.isAllSelected;
         setAreTrue(areTrue);
         setHideColumn(!areAllTrue(areTrue));
