@@ -157,10 +157,10 @@ function App() {
   function onFilterChange(filterChangeEvent) {
     filterChangeEvent.getFilterAsync().then((filter) => {
 
-      if (filter.worksheetName === 'extension_wersja_bazowa4' && filter.fieldName === 'Abtest Wersja') {
+      if (filter.worksheetName === 'extension_wersja_bazowa4' && (filter.fieldName === 'Abtest Wersja' || filter.fieldName === 'Wersja')) {
         let val = filter.appliedValues.reduce((acc, val) => acc + val._formattedValue, '');
         updateParameter('wersja_baz_4_zakladka', val);
-      } else if (filter.worksheetName === 'extension_wersja_bazowa3' && filter.fieldName === 'Abtest Wersja') {
+      } else if (filter.worksheetName === 'extension_wersja_bazowa3' && (filter.fieldName === 'Abtest Wersja' || filter.fieldName === 'Wersja')) {
         let val = filter.appliedValues.reduce((acc, val) => acc + val._formattedValue, '');
         updateParameter('wersja_baz_3_zakladka', val);
       } else if (filter.worksheetName === 'API3' && filter.fieldName === 'Abtest') {
@@ -182,7 +182,7 @@ function App() {
 
   return (
     <div>
-      <button className='button' onClick={getValsForAPI}>GO</button>
+      <button className='button' onClick={getValsForAPI}>Wylicz istotność</button>
     </div>
   );
 
