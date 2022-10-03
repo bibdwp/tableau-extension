@@ -8,16 +8,15 @@
   font-size: 12px;
   font-weight: bold;
   height: 22px;
-  min-width: 96px;
-  padding: 0 0px;
-  margin: 0px;
+  min-width: 88px;
+  padding: 0 2px;
+  margin: 2px;
   user-select: none;
   white-space: nowrap;
   text-align: center;
-  width: 100%;
+  width: 98%;
   -webkit-tap-highlight-color: transparent;
   outline: none;
-
 }
 
 .button:disabled {
@@ -43,7 +42,7 @@
   font-size: 12px;
   font-weight: bold;
   height: 22px;
-  min-width: 96px;
+  min-width: 88px;
   user-select: none;
   white-space: nowrap;
   border: none;
