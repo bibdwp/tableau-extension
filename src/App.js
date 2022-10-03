@@ -185,7 +185,7 @@ function App() {
   };
 
   return (
-    <div>
+    <div title={disabled === true ? 'Wybierz wersję referencyjną aby aktywować przycisk "Wylicz istotność".' : ''}>
       <button disabled={disabled} className='button' onClick={getValsForAPI}>Wylicz istotność</button>
     </div>
   );
