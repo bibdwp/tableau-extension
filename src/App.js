@@ -23,7 +23,9 @@ function App() {
     'Lazy Loading': true,
     'Przeglądarka': true,
     'Strona Amp': true
-  })
+  });
+
+  const [disabled, setDisabled] = useState(true);
 
   function areAllTrue(vals) {
     return Object.values(vals).every(val => val === true)
@@ -167,10 +169,12 @@ function App() {
         let paramVal = filter.appliedValues.reduce((acc, val) => acc + val._formattedValue + ',', '').replace(/,\s*$/, '');
         paramVal = paramVal.substring(paramVal.lastIndexOf('|') + 1).trim();
         updateParameter('ep3_wybrana_wer_bazowa', paramVal);
+        setDisabled(false);
       } else if (filter.fieldName === 'Abtest') {
         let paramVal = filter.appliedValues.reduce((acc, val) => acc + val._formattedValue + ',', '').replace(/,\s*$/, '');
         paramVal = paramVal.substring(paramVal.lastIndexOf('|') + 1).trim();
         updateParameter('ep_wybrana_wer_bazowa', paramVal);
+        setDisabled(false);
       } else if ((filter.worksheetName === "VIMP" || filter.worksheetName === "Adplacement" || filter.worksheetName === "Slot") && filtersToHide.has(filter.fieldName)) {
         areTrue[filter.fieldName] = filter.isAllSelected;
         setAreTrue(areTrue);
@@ -182,7 +186,7 @@ function App() {
 
   return (
     <div>
-      <button className='button' onClick={getValsForAPI}>Wylicz istotność</button>
+      <button disabled={disabled} className='button' onClick={getValsForAPI}>Wylicz istotność</button>
     </div>
   );
 
