@@ -25,13 +25,10 @@ function App() {
     'Strona Amp': true
   });
 
-  const [disabled, setDisabled] = useState(
-    JSON.parse(localStorage.getItem('is-disabled')) || true
-  );
+  const [disabled, setDisabled] = useState(false);
 
   function handleDisabled(val) {
     setDisabled(val);
-    localStorage.setItem('is-disabled', JSON.stringify(val));
   }
   
   function areAllTrue(vals) {
@@ -89,7 +86,6 @@ function App() {
                 filterVals = 'All';
               };
             } else if (filter._filterType === 'range') {
-              // eslint-disable-next-line
               filterVals = '{"date_start":"' + filter.minValue.formattedValue + '",' + '"date_end":"' + filter.maxValue.formattedValue + '"}';
             } else {
               filterVals = ' '
@@ -116,7 +112,6 @@ function App() {
                 filterVals = 'All';
               };
             } else if (filter._filterType === 'range') {
-              // eslint-disable-next-line
               filterVals = '{"date_start":"' + filter.minValue.formattedValue + '",' + '"date_end":"' + filter.maxValue.formattedValue + '"}';
             } else {
               filterVals = ' '
