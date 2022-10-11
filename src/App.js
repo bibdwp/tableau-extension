@@ -25,8 +25,15 @@ function App() {
     'Strona Amp': true
   });
 
-  const [disabled, setDisabled] = useState(true);
+  const [disabled, setDisabled] = useState(
+    JSON.parse(localStorage.getItem('is-disabled')) || true
+  );
 
+  function handleDisabled(val) {
+    setDisabled(val);
+    localStorage.setItem('is-disabled', JSON.stringify(val));
+  }
+  
   function areAllTrue(vals) {
     return Object.values(vals).every(val => val === true)
   }
@@ -43,7 +50,7 @@ function App() {
     });
   }, []);
 
-  async function updateParameter(param_name, value) {
+  function updateParameter(param_name, value) {
     tableau.extensions.dashboardContent.dashboard.findParameterAsync(param_name).then(param =>
       param.changeValueAsync(value));
   };
@@ -165,16 +172,14 @@ function App() {
       } else if (filter.worksheetName === 'extension_wersja_bazowa3' && (filter.fieldName === 'Abtest Wersja' || filter.fieldName === 'Wersja')) {
         let val = filter.appliedValues.reduce((acc, val) => acc + val._formattedValue, '');
         updateParameter('wersja_baz_3_zakladka', val);
-      } else if (filter.worksheetName === 'API3' && filter.fieldName === 'Abtest') {
-        let paramVal = filter.appliedValues.reduce((acc, val) => acc + val._formattedValue + ',', '').replace(/,\s*$/, '');
-        paramVal = paramVal.substring(paramVal.lastIndexOf('|') + 1).trim();
-        updateParameter('ep3_wybrana_wer_bazowa', paramVal);
-        setDisabled(false);
+      } else if (filter.fieldName === 'Abtest Id') {
+        updateParameter('ep_wybrana_wer_bazowa', ' ');
+        handleDisabled(true);
       } else if (filter.fieldName === 'Abtest') {
         let paramVal = filter.appliedValues.reduce((acc, val) => acc + val._formattedValue + ',', '').replace(/,\s*$/, '');
         paramVal = paramVal.substring(paramVal.lastIndexOf('|') + 1).trim();
         updateParameter('ep_wybrana_wer_bazowa', paramVal);
-        setDisabled(false);
+        handleDisabled(false);
       } else if ((filter.worksheetName === "VIMP" || filter.worksheetName === "Adplacement" || filter.worksheetName === "Slot") && filtersToHide.has(filter.fieldName)) {
         areTrue[filter.fieldName] = filter.isAllSelected;
         setAreTrue(areTrue);
