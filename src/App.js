@@ -47,7 +47,7 @@ function App() {
     });
   }, []);
 
-  function updateParameter(param_name, value) {
+  async function updateParameter(param_name, value) {
     tableau.extensions.dashboardContent.dashboard.findParameterAsync(param_name).then(param =>
       param.changeValueAsync(value));
   };
@@ -169,6 +169,13 @@ function App() {
         updateParameter('wersja_baz_3_zakladka', val);
       } else if (filter.fieldName === 'Abtest Id') {
         updateParameter('ep_wybrana_wer_bazowa', ' ');
+            if (filter.worksheetName === "API") {
+              updateParameter('epAbtest', ' ')
+            } else if (filter.worksheetName === "AP2"){
+              updateParameter('ep2Abtest', ' ')
+            } else if (filter.worksheetName === "AP3"){
+              updateParameter('ep3Abtest', ' ')
+            }
         handleDisabled(true);
       } else if (filter.fieldName === 'Abtest') {
         let paramVal = filter.appliedValues.reduce((acc, val) => acc + val._formattedValue + ',', '').replace(/,\s*$/, '');
